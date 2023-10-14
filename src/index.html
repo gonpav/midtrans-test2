@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="./styles.css" rel="stylesheet">
+  <title>My Project</title>
+</head>
+<body class="flex flex-col items-center justify-center min-h-screen bg-gray-100"> 
+    <div class=" p-8 rounded shadow-lg text-center">
+      <label for="email" class="block text-left">Email:</label>
+      <input type="email" id="email" value="app+1@liga.tennis" placeholder="Enter your email" required class="border p-2 my-2 w-64">
+      
+      <label for="price" class="block text-left">Court Price:</label>
+      <input type="number" id="price" value="150000" placeholder="Enter court rental price" required class="border p-2 my-2 w-64">
+      
+      <label for="fee" class="block text-left">Platform Fee:</label>
+      <input type="number" id="fee" value="5000" placeholder="Enter platform fee" required class="border p-2 my-2 w-64">
+            
+      <div id="payment-options" class="text-left my-4">
+        <!-- Payment options with radio buttons -->
+        <div>
+          <input type="radio" id="credit-card" name="payment-option" value="credit-card" checked onchange="paymentOptionSelected()">
+          <label for="credit-card">Credit Card: <span id="credit-card-total"><span class="text-gray-500">(2.6% + 1332): </span><span id="credit-card-amount" class="text-gray-500"></span></span></label>              
+        </div>          
+        <div>
+          <input type="radio" id="bank-transfer" name="payment-option" value="bank-transfer" onchange="paymentOptionSelected()">
+          <label for="bank-transfer">Bank Transfer: <span id="bank-transfer-total"><span class="text-gray-500">(3330): </span><span id="bank-transfer-amount" class="text-gray-500"></span></span></label>
+        </div>
+
+        <div>
+          <input type="radio" id="gopay" name="payment-option" value="gopay" onchange="paymentOptionSelected()">
+          <label for="GoPay">GoPay: <span id="gopay-total"><span class="text-gray-500">(10%): </span><span id="gopay-amount" class="text-gray-500"></span></span></label>
+        </div>
+        
+        <div>
+          <input type="radio" id="shopeepay" name="payment-option" value="shopeepay" onchange="paymentOptionSelected()">
+          <label for="shopeepay">ShopeePay: <span id="shopeepay-total"><span class="text-gray-500">(4%): </span><span id="shopeepay-amount" class="text-gray-500"></span></span></label>
+        </div>
+        
+        <div>
+          <input type="radio" id="qris" name="payment-option" value="qris" onchange="paymentOptionSelected()">
+          <label for="qris">QRIS: <span id="qris-total"><span class="text-gray-500">(0.7%): </span><span id="qris-amount" class="text-gray-500"></span></span></label>
+        </div>
+        
+        <div>
+          <input type="radio" id="indomaret" name="payment-option" value="indomaret" onchange="paymentOptionSelected()">
+          <label for="indomaret">Indomaret: <span id="indomaret-total"><span class="text-gray-500">(Partner fee + 1110): </span><span id="indomaret-amount" class="text-gray-500"></span></span></label>
+        </div>
+        
+        <div>
+          <input type="radio" id="alfamart" name="payment-option" value="alfamart" onchange="paymentOptionSelected()">
+          <label for="alfamart">Alfamart: <span id="alfamart-total"><span class="text-gray-500">(5000): </span><span id="alfamart-amount" class="text-gray-500"></span></span></label>
+        </div>
+        
+        <div>
+          <input type="radio" id="kredivo" name="payment-option" value="kredivo" onchange="paymentOptionSelected()">
+          <label for="kredivo">Kredivo: <span id="kredivo-total"><span class="text-gray-500">(2.22%): </span><span id="kredivo-amount" class="text-gray-500"></span></span></label>
+        </div>
+        
+        <div>
+          <input type="radio" id="akulaku" name="payment-option" value="akulaku" onchange="paymentOptionSelected()">
+          <label for="akulaku">Akulaku: <span id="akulaku-total"><span class="text-gray-500">(1.7%): </span><span id="akulaku-amount" class="text-gray-500"></span></span></label>
+        </div>
+        
+
+        
+      
+      <label class="block my-2 text-left">Total: <span id="total" class="font-bold">155000</span></label>
+      <!-- <label class="block my-2 text-left">Total: <span id="total" class="font-bold">155000</span><span id="additional-percentage" class="text-gray-500"></span></label> -->
+      
+      <div class="border p-4 my-4 rounded">
+        <label id="fee-percentage" class="block px-2 mt-2 text-left text-gray-500">Platform fee: <span id="fee-percentage-value"></span></label>
+        <label id="payment-option-fee-percentage" class="block px-2 text-left text-gray-500">Payment method fee: <span id="payment-option-fee-percentage-value"></span></label>
+        <label id="total-additional-charges-percentage" class="block px-2 mb-2 text-left text-gray-500">Total additional charges: <span id="total-additional-charges-percentage-value"></span></label>
+      </div>
+
+      <button id="book-button" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700">Book a Court</button>
+    </div>
+    <table id="transactions" class="mt-8">
+        <!-- Transactions table -->
+    </table>
+
+  <!-- TODO: Remove ".sandbox" from script src URL for production environment. Also input your client key in "data-client-key" -->
+  <script src="https://app.sandbox.midtrans.com/snap/snap.js" data-client-key="SB-Mid-client-MHRRQijtbDky9fhv"></script>
+  <script src="./script.js"></script>
+</body>
+</html>
