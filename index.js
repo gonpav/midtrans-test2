@@ -59,7 +59,7 @@ app.post('/book', async (req, res) => {
         item_details: [
             {
                 id: 'item-booking-'  + orderId, 
-                price: courtPrice,
+                price: courtPrice, 
                 quantity: 1,
                 name: 'Booking of the court at Love Tennis Academy',
                 brand: 'Love Tennis Academy',

@@ -8,15 +8,11 @@ function paymentOptionSelected() {
 }
 
 function getCourtPrice () {
-    // const courtPrice = document.getElementById('price').value;
-    // return parseInt(courtPrice);
-    return parseFloat(document.getElementById('price').value);
+    return Math.ceil(parseFloat(document.getElementById('price').value)); // Important to round up because only integers accepted
 }
 
 function getPlatformFee () {
-    // const fee = document.getElementById('fee').value;
-    // return parseInt(fee);
-    return  parseFloat(document.getElementById('fee').value);
+    return  Math.ceil(parseFloat(document.getElementById('fee').value)); // Important to round up because only integers accepted
 }
 
 function getPaymentOptionTotal(selectedOption) {
@@ -59,7 +55,7 @@ function getPaymentOptionTotal(selectedOption) {
             return;
     }
 
-    return paymentTotal;
+    return Math.ceil(paymentTotal); // Important to round up because only integers accepted
 }
 
 function getTotalPrice () {
