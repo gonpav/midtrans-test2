@@ -29,22 +29,37 @@ let snap = new midtransClient.Snap({
 
 // Create a route to handle the booking
 app.post('/book', async (req, res) => {
-    let { email, price, fee, totalPrice } = req.body;
+    const now = new Date()
+    const orderId = now.getTime();
+    let { email, courtPrice, platformFee, totalPrice, paymentOptions, platformFeePercentage, paymentOptionPercentage } = req.body;
+    //console.log(paymentOption);
+    //res.status(500).send("Just exit");
+    //return;
     let transaction = {
         transaction_details: {
-            order_id: 'order-' + new Date().getTime(),
+            order_id: 'order-' + orderId,
             gross_amount: totalPrice
         },
+        enabled_payments: paymentOptions, // ["bank_transfer"],
         credit_card: {
             secure: true
         },
         customer_details: {
             email
         },
+        expiry:  {
+            start_time: now,
+            unit: "minutes",
+            duration: 15        // wait for 15 minutes for transaction to complete
+        },
+        expiry:  {
+            unit: "minutes",
+            duration: 14        // show snap for 14 minutes 
+        },
         item_details: [
             {
-                id: 'item-booking-'  + new Date().getTime(), 
-                price: price,
+                id: 'item-booking-'  + orderId, 
+                price: courtPrice,
                 quantity: 1,
                 name: 'Booking of the court at Love Tennis Academy',
                 brand: 'Love Tennis Academy',
@@ -52,19 +67,26 @@ app.post('/book', async (req, res) => {
                 merchant_name: 'Love Tennis Academy'
             },
             {
-                id: 'item-fee-'  + new Date().getTime(), 
-                price: fee,
+                id: 'item-fee-'  + orderId, 
+                price: platformFee,
                 quantity: 1,
-                name: 'Liga App fee',
+                name: 'Pltaform fee ' + platformFeePercentage,
                 brand: 'Love App',
                 category: 'Sports',
                 merchant_name: 'Liga App'
             },
+            {
+                id: 'item-midtrans-'  + orderId, 
+                price: totalPrice - (courtPrice + platformFee),
+                quantity: 1,
+                name: 'Mindtrans fee ' + paymentOptionPercentage,
+                brand: 'Midtrans',
+            },            
         ],
     };
     try {
         let snapToken = await snap.createTransaction(transaction);
-        res.json(snapToken);
+        res.json({snapToken: snapToken, paymentOptions: paymentOptions});
     } catch (error) {
         console.error(error);
         res.status(500).send(error.message);

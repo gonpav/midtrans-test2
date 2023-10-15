@@ -719,6 +719,11 @@ video {
   font-size: 0.75rem; /* Adjust the font size as desired */
 }
 
+#payment-expiration
+{
+  font-size: 0.65rem; /* Adjust the font size as desired */
+}
+
 .font-bold {
   font-weight: 700;
 }

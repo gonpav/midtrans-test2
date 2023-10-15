@@ -16,7 +16,8 @@
       
       <label for="fee" class="block text-left">Platform Fee:</label>
       <input type="number" id="fee" value="5000" placeholder="Enter platform fee" required class="border p-2 my-2 w-64">
-            
+      
+      <label for="payment-options" class="block mt-2 text-left">Select Payment Method:</label>            
       <div id="payment-options" class="text-left my-4">
         <!-- Payment options with radio buttons -->
         <div>
@@ -76,6 +77,7 @@
       </div>
 
       <button id="book-button" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700">Book a Court</button>
+      <label id="payment-expiration" class="block my-2 text-left font-bold">You have 15 minutes to complete payment</label>
     </div>
     <table id="transactions" class="mt-8">
         <!-- Transactions table -->

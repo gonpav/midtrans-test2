@@ -67,6 +67,33 @@ function getTotalPrice () {
     return getPaymentOptionTotal(selectedOption);
 }
 
+function getPlatformFeePercentage () {
+    const courtPrice = getCourtPrice();
+    const fee = getPlatformFee();
+    
+    const platformFee = (fee * 100) / courtPrice;
+    return platformFee;
+}
+
+function getPaymentOptionPercentage () {
+    const courtPrice = getCourtPrice();
+    const fee = getPlatformFee();
+    const total = courtPrice + fee;
+    const paymentTotal = getTotalPrice();
+    
+    const paymentOptionFee = ((paymentTotal - total) / total) * 100;
+    return paymentOptionFee;
+}
+
+function getTotalAdditionalChargesPercentage () {
+    const courtPrice = getCourtPrice();
+    const fee = getPlatformFee();
+    const paymentTotal = getTotalPrice();
+    
+    const totalFee = ((paymentTotal - courtPrice)/ courtPrice) * 100;
+    return totalFee;
+}
+
 function updateSummary() {
 
     document.getElementById('credit-card-amount').textContent = getPaymentOptionTotal('credit-card').toFixed(0);
@@ -81,32 +108,40 @@ function updateSummary() {
     
     document.getElementById('total').innerText = getTotalPrice().toFixed(2);   
 
-    updateFees();
+    document.getElementById('fee-percentage-value').innerText = ` ${getPlatformFeePercentage().toFixed(2)}%`;
+    document.getElementById('payment-option-fee-percentage-value').innerText = ` ${getPaymentOptionPercentage().toFixed(2)}%`;
+    document.getElementById('total-additional-charges-percentage-value').innerText = ` ${getTotalAdditionalChargesPercentage().toFixed(2)}%`;
 }
 
-function updateFees() {
-
-    const courtPrice = getCourtPrice();
-    const fee = getPlatformFee();
-    const total = courtPrice + fee;
-    const paymentTotal = getTotalPrice();
+function isMobileVersion() {
+    // This esential to correctly identify if we are in mobile to switch to GoPay and ShopeePay apps 
     
-    const platformFee = (fee * 100) / courtPrice;
-    const paymentOptionFee = ((paymentTotal - total) / total) * 100;
-    const totalFee = ((paymentTotal - courtPrice)/ courtPrice) * 100;
+    // https://docs.midtrans.com/docs/technical-faq#does-midtrans-support-flutter-react-native-or-other-hybridnon-native-mobile-framework
+    // https://docs.midtrans.com/docs/technical-faq#customer-fails-to-be-redirected-to-gojek-deeplink-on-mobile-app-what-should-i-do
+    
+    const isMobile = /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(navigator.userAgent);
+    return isMobile;
+}
 
-    document.getElementById('fee-percentage-value').innerText = ` ${platformFee.toFixed(2)}%`;
-    document.getElementById('payment-option-fee-percentage-value').innerText = ` ${paymentOptionFee.toFixed(2)}%`;
-    document.getElementById('total-additional-charges-percentage-value').innerText = ` ${totalFee.toFixed(2)}%`;
+function getSelectedMidtransPaymentOptions() {
+    const isMobile = isMobileVersion();
+    const paymentOption = document.querySelector('input[name="payment-option"]:checked').value;
+    if (paymentOption === 'credit-card') return ['credit_card'];
+    if (paymentOption === 'bank-transfer') return ['bank_transfer', 'other_va'];
+    if (paymentOption === 'qris' && isMobile) return ["other_qris"];
+    if (paymentOption === 'qris' && !isMobile) return ["other_qris", "gopay", "shopeepay"];
+    return  [`${paymentOption}`];
 }
 
 function bookCourt() {
     console.log('Book Court pressd');
     const email = document.getElementById('email').value;
     const courtPrice = getCourtPrice();
-    const fee = getPlatformFee ();
+    const platformFee = getPlatformFee ();
     const totalPrice = getTotalPrice();
-    const paymentOption = document.querySelector('input[name="payment-option"]:checked').value;
+    const platformFeePercentage = `(${getPlatformFeePercentage ().toFixed(0)}%)`;
+    const paymentOptionPercentage = `(${getPaymentOptionPercentage().toFixed(0)}%)`;
+    const paymentOptions = getSelectedMidtransPaymentOptions();
     
     fetch('/book', {
         method: 'POST',
@@ -115,15 +150,23 @@ function bookCourt() {
         },
         body: JSON.stringify({
             email: email,
-            price: courtPrice,
-            fee: fee,
+            courtPrice: courtPrice,
+            platformFee: platformFee,
             totalPrice: totalPrice,
-            paymentOption: paymentOption,
+            paymentOptions: paymentOptions,
+            platformFeePercentage: platformFeePercentage,
+            paymentOptionPercentage: paymentOptionPercentage,
         })
     })
     .then(response => response.json())
     .then(data => {
-        snap.pay(data.token, {
+        let options = {
+            uiMode: 'auto'
+        };
+        if (data.paymentOptions.includes("gopay") || data.paymentOptions.includes("shopeepay")){
+            options.uiMode = isMobileVersion() ? 'deeplink' : 'qr';
+        }
+        snap.pay(data.snapToken.token, options, {
             onSuccess: function(result) {
                 updateTransactions(result);
             },
@@ -132,6 +175,9 @@ function bookCourt() {
             },
             onError: function(result) {
                 console.error(result);
+            },
+            onClose: function(){
+                console.log('customer closed the popup without finishing the payment');
             }
         });
     })
