@@ -22,11 +22,6 @@ let snap = new midtransClient.Snap({
     clientKey: process.env.MIDTRANS_CLIENT_KEY
 });
 
-
-// app.get('/action', (req, res) => {
-//   res.json({ message: 'Action was triggered!' });
-// });
-
 // Create a route to handle the booking
 app.post('/book', async (req, res) => {
     const now = new Date()
@@ -96,10 +91,19 @@ app.post('/book', async (req, res) => {
 // Setup the webhook to listen for Midtrans events
 app.post('/webhook', (req, res) => {
     let event = req.body;
+
+    // https://docs.midtrans.com/docs/https-notification-webhooks
+
     // Process the event accordingly
+    // event.order_id: 'order-1697361779293', 
+
+    // Credit card:
+    // event.transaction_status === 'deny'; // Do nothing for next 15 minutes. User might still pay for this order
+    // event.transaction_status === 'capture'; // paid succesuly
+
     res.status(200).send();
 });
 
 app.listen(3000, () => {
-  console.log('Server is listening on port 3000');
+    console.log('Server is listening on port 3000');
 });
