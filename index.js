@@ -97,10 +97,11 @@ app.post('/webhook', (req, res) => {
     // Process the event accordingly
     // event.order_id: 'order-1697361779293', 
 
-    // Credit card:
     // event.transaction_status === 'deny'; // Do nothing for next 15 minutes. User might still pay for this order
-    // event.transaction_status === 'capture'; // paid succesuly
+    // event.transaction_status === 'capture'; // Credit card: paid succesuly (but not yet settled - happens later)
+    // event.transaction_status === 'settlement'; // settlement (successful settlement of the transaction on our account)
 
+    console.log(event);
     res.status(200).send();
 });
 
