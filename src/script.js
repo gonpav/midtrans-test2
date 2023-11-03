@@ -15,7 +15,54 @@ function getPlatformFee () {
     return  Math.ceil(parseFloat(document.getElementById('fee').value)); // Important to round up because only integers accepted
 }
 
+
 function getPaymentOptionTotal(selectedOption) {
+    const courtPrice = getCourtPrice();
+    const fee = getPlatformFee();
+    const total = courtPrice + fee;
+
+    let paymentTotal;
+
+    switch(selectedOption) {
+        case 'credit-card':
+            // We need to test both variants in production, because 
+            // we don't know exactly how it will be calculated by Midtrans
+            paymentTotal = total * 100 / (100 - 2.6) + 1332; // +2.6% of the total + 1332
+            //paymentTotal = (total + 1332 ) * 100 / (100 - 2.6); // +2.6% of the total + 1332
+            break;
+        case 'bank-transfer':
+            paymentTotal = total + 3330;
+            break;
+        case 'gopay':
+            paymentTotal = total * 100 / (100 - 10); // 10% of the total
+            break;
+        case 'shopeepay':
+            paymentTotal = total * 100 / (100 - 4); // 4% of the total
+            break;
+        case 'qris':
+            paymentTotal = total * 100 / (100 - 0.7); // 0.7% of the total
+            break;
+        case 'indomaret':
+            paymentTotal = total + 1110; // !!!!!!!!!!!!! This is not correct, because there variable PARTNER Fee
+            break;
+        case 'alfamart':
+            paymentTotal = total + 5000;
+            break;
+        case 'kredivo':
+            paymentTotal = total * 100 / (100-2.22) // 2.22% of the total
+            break;
+        case 'akulaku':
+            paymentTotal = total * 100 / (100-1.7); // 1.7% of the total
+            break;
+        default:
+            console.error('Unknown payment option:', selectedOption);
+            return;
+    }
+
+    return Math.ceil(paymentTotal); // Important to round up because only integers accepted
+}
+
+function getPaymentOptionTotalOld(selectedOption) {
     const courtPrice = getCourtPrice();
     const fee = getPlatformFee();
     const total = courtPrice + fee;
